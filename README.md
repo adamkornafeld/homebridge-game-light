@@ -1,215 +1,264 @@
 <p align="center">
-
-<img src="https://github.com/homebridge/branding/raw/latest/logos/homebridge-wordmark-logo-vertical.png" width="150">
-
+  <img src="https://github.com/homebridge/branding/raw/latest/logos/homebridge-wordmark-logo-vertical.png" width="150">
 </p>
 
-<span align="center">
+<h1 align="center">Game Light</h1>
 
-# Homebridge Platform Plugin Template
+<p align="center">
+  A Homebridge plugin that creates a switch to trigger HomeKit automations when your favorite sports team plays.
+</p>
 
-</span>
-
-> [!IMPORTANT]
-> **Homebridge v2.0 Information**
->
-> This template currently has a
-> - `package.json -> engines.homebridge` value of `"^1.8.0 || ^2.0.0-beta.0"`
-> - `package.json -> devDependencies.homebridge` value of `"^2.0.0-beta.0"`
->
-> This is to ensure that your plugin will build and run on both Homebridge v1 and v2.
->
-> Once Homebridge v2.0 has been released, you can remove the `-beta.0` in both places.
+<p align="center">
+  <a href="https://www.npmjs.com/package/homebridge-game-light"><img src="https://img.shields.io/npm/v/homebridge-game-light?style=flat-square" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/homebridge-game-light"><img src="https://img.shields.io/npm/dt/homebridge-game-light?style=flat-square" alt="npm downloads"></a>
+  <a href="https://github.com/adamkornafeld/homebridge-game-light/blob/latest/LICENSE"><img src="https://img.shields.io/github/license/adamkornafeld/homebridge-game-light?style=flat-square" alt="license"></a>
+</p>
 
 ---
 
-This is a template Homebridge dynamic platform plugin and can be used as a base to help you get started developing your own plugin.
+## 🏀 What It Does
 
-This template should be used in conjunction with the [developer documentation](https://developers.homebridge.io/). A full list of all supported service types, and their characteristics is available on this site.
+Game Light monitors sports schedules and creates a **switch** in HomeKit that automatically turns **ON** when your team's game starts and **OFF** when it ends.
 
-### Clone As Template
+You then create HomeKit automations to control your actual lights:
 
-Click the link below to create a new GitHub Repository using this template, or click the *Use This Template* button above.
+- **Game starts** → Living room turns to team color
+- **Game ends** → Living room returns to normal
 
-<span align="center">
+This approach lets you use **any lights** already in your HomeKit setup (Hue, LIFX, Nanoleaf, etc.).
 
-### [Create New Repository From Template](https://github.com/homebridge/homebridge-plugin-template/generate)
+> **Currently Supported:** NBA Basketball  
+> More sports coming soon! See [Future Extensibility](#-future-extensibility).
 
-</span>
+## ✨ Features
 
-### Setup Development Environment
+- 🏀 Track your favorite team
+- ⏱️ Smart polling with increased frequency in final minutes
+- 🔄 Automatic game detection from official schedules
+- 🎮 Manual switch toggle for testing
+- 📊 Robust API rate limiting and retry logic
 
-To develop Homebridge plugins you must have Node.js 20 or later installed, and a modern code editor such as [VS Code](https://code.visualstudio.com/). This plugin template uses [TypeScript](https://www.typescriptlang.org/) to make development easier and comes with pre-configured settings for [VS Code](https://code.visualstudio.com/) and ESLint. If you are using VS Code install these extensions:
+## 📦 Installation
 
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+### Via Homebridge UI (Recommended)
 
-### Install Development Dependencies
+1. Open the Homebridge UI
+2. Go to **Plugins** tab
+3. Search for `homebridge-game-light`
+4. Click **Install**
 
-Using a terminal, navigate to the project folder and run this command to install the development dependencies:
+### Via Command Line
 
-```shell
-npm install
+```bash
+npm install -g homebridge-game-light
 ```
 
-### Update package.json
+## ⚙️ Configuration
 
-Open the [`package.json`](./package.json) and change the following attributes:
+### Via Homebridge UI
 
-- `name` - this should be prefixed with `homebridge-` or `@username/homebridge-`, is case-sensitive, and contains no spaces nor special characters apart from a dash `-`
-- `displayName` - this is the "nice" name displayed in the Homebridge UI
-- `homepage` - link to your GitHub repo's `README.md`
-- `repository.url` - link to your GitHub repo
-- `bugs.url` - link to your GitHub repo issues page
+1. Go to **Plugins** → **Game Light** → **Settings**
+2. Select your sport and team
+3. Save and restart Homebridge
 
-When you are ready to publish the plugin you should set `private` to false, or remove the attribute entirely.
+### Manual Configuration
 
-### Update Plugin Defaults
+Add to your `config.json`:
 
-Open the [`src/settings.ts`](./src/settings.ts) file and change the default values:
-
-- `PLATFORM_NAME` - Set this to be the name of your platform. This is the name of the platform that users will use to register the plugin in the Homebridge `config.json`.
-- `PLUGIN_NAME` - Set this to be the same name you set in the [`package.json`](./package.json) file.
-
-Open the [`config.schema.json`](./config.schema.json) file and change the following attribute:
-
-- `pluginAlias` - set this to match the `PLATFORM_NAME` you defined in the previous step.
-
-See the [Homebridge API docs](https://developers.homebridge.io/#/config-schema#default-values) for more details on the other attributes you can set in the `config.schema.json` file.
-
-### Build Plugin
-
-TypeScript needs to be compiled into JavaScript before it can run. The following command will compile the contents of your [`src`](./src) directory and put the resulting code into the `dist` folder.
-
-```shell
-npm run build
-```
-
-### Link To Homebridge
-
-Run this command so your global installation of Homebridge can discover the plugin in your development environment:
-
-```shell
-npm link
-```
-
-You can now start Homebridge, use the `-D` flag, so you can see debug log messages in your plugin:
-
-```shell
-homebridge -D
-```
-
-### Watch For Changes and Build Automatically
-
-If you want to have your code compile automatically as you make changes, and restart Homebridge automatically between changes, you first need to add your plugin as a platform in `./test/hbConfig/config.json`:
-```
+```json
 {
-...
-    "platforms": [
-        {
-            "name": "Config",
-            "port": 8581,
-            "platform": "config"
-        },
-        {
-            "name": "<PLUGIN_NAME>",
-            //... any other options, as listed in config.schema.json ...
-            "platform": "<PLATFORM_NAME>"
-        }
-    ]
+  "platforms": [
+    {
+      "platform": "GameLight",
+      "name": "Game Light",
+      "sport": "NBA",
+      "team": "BOS",
+      "pollingInterval": 5,
+      "scheduleCheckInterval": 6
+    }
+  ]
 }
 ```
 
-and then you can run:
+### Configuration Options
 
-```shell
-npm run watch
+| Option | Description | Default |
+|--------|-------------|---------|
+| `sport` | Sport league (`NBA`) | `NBA` |
+| `team` | Team abbreviation (e.g., `BOS`, `LAL`, `GSW`) | `BOS` |
+| `pollingInterval` | Minutes between game status checks during a game | `5` |
+| `scheduleCheckInterval` | Hours between schedule checks when idle | `6` |
+
+### NBA Teams & Colors
+
+Use these **Hue** (H) and **Saturation** (S) values when setting up your HomeKit light automations. In the Home app color picker, set the hue angle and saturation percentage to match.
+
+#### Eastern Conference
+
+| Code | Team | Primary | H° / S% | Secondary | H° / S% |
+|------|------|---------|---------|-----------|---------|
+| ATL | Atlanta Hawks | ![](https://img.shields.io/badge/-%20-E03A3E?style=flat-square) Hawks Red | 358 / 74 | ![](https://img.shields.io/badge/-%20-C1D32F?style=flat-square) Volt Green | 68 / 65 |
+| BOS | Boston Celtics | ![](https://img.shields.io/badge/-%20-007A33?style=flat-square) Celtics Green | 145 / 100 | ![](https://img.shields.io/badge/-%20-BA9653?style=flat-square) Gold | 38 / 36 |
+| BKN | Brooklyn Nets | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 | ![](https://img.shields.io/badge/-%20-FFFFFF?style=flat-square) White | 0 / 0 |
+| CHA | Charlotte Hornets | ![](https://img.shields.io/badge/-%20-1D1160?style=flat-square) Hornets Purple | 256 / 79 | ![](https://img.shields.io/badge/-%20-00788C?style=flat-square) Teal | 187 / 100 |
+| CHI | Chicago Bulls | ![](https://img.shields.io/badge/-%20-CE1141?style=flat-square) Bulls Red | 350 / 87 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| CLE | Cleveland Cavaliers | ![](https://img.shields.io/badge/-%20-860038?style=flat-square) Wine | 341 / 100 | ![](https://img.shields.io/badge/-%20-FDBB30?style=flat-square) Gold | 43 / 97 |
+| DET | Detroit Pistons | ![](https://img.shields.io/badge/-%20-C8102E?style=flat-square) Red | 350 / 82 | ![](https://img.shields.io/badge/-%20-1D42BA?style=flat-square) Royal Blue | 224 / 78 |
+| IND | Indiana Pacers | ![](https://img.shields.io/badge/-%20-002D62?style=flat-square) Pacers Blue | 214 / 100 | ![](https://img.shields.io/badge/-%20-FDBB30?style=flat-square) Gold | 43 / 97 |
+| MIA | Miami Heat | ![](https://img.shields.io/badge/-%20-98002E?style=flat-square) Heat Red | 345 / 100 | ![](https://img.shields.io/badge/-%20-F9A01B?style=flat-square) Orange | 37 / 93 |
+| MIL | Milwaukee Bucks | ![](https://img.shields.io/badge/-%20-00471B?style=flat-square) Good Land Green | 145 / 100 | ![](https://img.shields.io/badge/-%20-EEE1C6?style=flat-square) Cream City Cream | 42 / 67 |
+| NYK | New York Knicks | ![](https://img.shields.io/badge/-%20-006BB6?style=flat-square) Knicks Blue | 207 / 100 | ![](https://img.shields.io/badge/-%20-F58426?style=flat-square) Orange | 24 / 92 |
+| ORL | Orlando Magic | ![](https://img.shields.io/badge/-%20-0077C0?style=flat-square) Magic Blue | 202 / 100 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| PHI | Philadelphia 76ers | ![](https://img.shields.io/badge/-%20-006BB6?style=flat-square) Royal Blue | 207 / 100 | ![](https://img.shields.io/badge/-%20-ED174C?style=flat-square) Red | 348 / 84 |
+| TOR | Toronto Raptors | ![](https://img.shields.io/badge/-%20-CE1141?style=flat-square) Raptors Red | 348 / 89 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| WAS | Washington Wizards | ![](https://img.shields.io/badge/-%20-002B5C?style=flat-square) Navy Blue | 214 / 100 | ![](https://img.shields.io/badge/-%20-E31837?style=flat-square) Red | 351 / 82 |
+
+#### Western Conference
+
+| Code | Team | Primary | H° / S% | Secondary | H° / S% |
+|------|------|---------|---------|-----------|---------|
+| DAL | Dallas Mavericks | ![](https://img.shields.io/badge/-%20-00538C?style=flat-square) Royal Blue | 207 / 100 | ![](https://img.shields.io/badge/-%20-002B5E?style=flat-square) Navy Blue | 210 / 100 |
+| DEN | Denver Nuggets | ![](https://img.shields.io/badge/-%20-0E2240?style=flat-square) Midnight Blue | 214 / 65 | ![](https://img.shields.io/badge/-%20-FEC524?style=flat-square) Sunshine Yellow | 47 / 98 |
+| GSW | Golden State Warriors | ![](https://img.shields.io/badge/-%20-1D428A?style=flat-square) Warriors Blue | 220 / 66 | ![](https://img.shields.io/badge/-%20-FFC72C?style=flat-square) Golden Yellow | 45 / 100 |
+| HOU | Houston Rockets | ![](https://img.shields.io/badge/-%20-CE1141?style=flat-square) Rockets Red | 348 / 89 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| LAC | LA Clippers | ![](https://img.shields.io/badge/-%20-C8102E?style=flat-square) Clippers Red | 350 / 82 | ![](https://img.shields.io/badge/-%20-1D428A?style=flat-square) Blue | 220 / 66 |
+| LAL | Los Angeles Lakers | ![](https://img.shields.io/badge/-%20-552583?style=flat-square) Lakers Purple | 270 / 56 | ![](https://img.shields.io/badge/-%20-FDB927?style=flat-square) Gold | 44 / 97 |
+| MEM | Memphis Grizzlies | ![](https://img.shields.io/badge/-%20-5D76A9?style=flat-square) Beale Street Blue | 221 / 34 | ![](https://img.shields.io/badge/-%20-12173F?style=flat-square) Navy Blue | 229 / 56 |
+| MIN | Minnesota Timberwolves | ![](https://img.shields.io/badge/-%20-0C2340?style=flat-square) Midnight Blue | 214 / 66 | ![](https://img.shields.io/badge/-%20-236192?style=flat-square) Lake Blue | 205 / 57 |
+| NOP | New Orleans Pelicans | ![](https://img.shields.io/badge/-%20-0C2340?style=flat-square) Pelicans Navy | 214 / 66 | ![](https://img.shields.io/badge/-%20-C8102E?style=flat-square) Red | 350 / 82 |
+| OKC | Oklahoma City Thunder | ![](https://img.shields.io/badge/-%20-007AC1?style=flat-square) Thunder Blue | 200 / 100 | ![](https://img.shields.io/badge/-%20-EF3B24?style=flat-square) Sunset Orange | 11 / 86 |
+| PHX | Phoenix Suns | ![](https://img.shields.io/badge/-%20-1D1160?style=flat-square) Suns Purple | 256 / 79 | ![](https://img.shields.io/badge/-%20-E56020?style=flat-square) Orange | 22 / 78 |
+| POR | Portland Trail Blazers | ![](https://img.shields.io/badge/-%20-E03A3E?style=flat-square) Blazers Red | 358 / 74 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| SAC | Sacramento Kings | ![](https://img.shields.io/badge/-%20-5A2D81?style=flat-square) Kings Purple | 275 / 52 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| SAS | San Antonio Spurs | ![](https://img.shields.io/badge/-%20-C4CED4?style=flat-square) Silver | 0 / 6 | ![](https://img.shields.io/badge/-%20-000000?style=flat-square) Black | 0 / 0 |
+| UTA | Utah Jazz | ![](https://img.shields.io/badge/-%20-002B5C?style=flat-square) Navy Blue | 214 / 100 | ![](https://img.shields.io/badge/-%20-00471B?style=flat-square) Green | 145 / 100 |
+
+> **Tip:** In the Home app, tap a light → tap the color wheel → use Hue (angle around the wheel) and Saturation (distance from center).
+
+## 🏠 Setting Up HomeKit Automations
+
+After installing and configuring the plugin, you'll see a switch named after your team (e.g., **"Boston Celtics Game"**) in the Home app.
+
+### Create "Game Start" Automation
+
+1. Open the **Home** app
+2. Tap **Automation** → **+** → **Add Automation**
+3. Choose **An Accessory is Controlled**
+4. Select your team's switch → **Turns On**
+5. Add actions:
+   - Set your lights to your team's color
+   - Set **Brightness** to **100%**
+6. Tap **Done**
+
+### Create "Game End" Automation
+
+1. Tap **+** → **Add Automation**
+2. Choose **An Accessory is Controlled**
+3. Select your team's switch → **Turns Off**
+4. Add actions to set your lights back to normal
+5. Tap **Done**
+
+## 🛠️ Development
+
+```bash
+# Clone the repository
+git clone https://github.com/adamkornafeld/homebridge-game-light.git
+cd game-light
+
+# Install dependencies
+npm install
+
+# Build
+npm run build
+
+# Link for local testing
+npm link
+
+# Run Homebridge with debug logging
+homebridge -D
 ```
 
-This will launch an instance of Homebridge in debug mode which will restart every time you make a change to the source code. It will load the config stored in the default location under `~/.homebridge`. You may need to stop other running instances of Homebridge while using this command to prevent conflicts. You can adjust the Homebridge startup command in the [`nodemon.json`](./nodemon.json) file.
+### Testing the API
 
-### Customise Plugin
-
-You can now start customising the plugin template to suit your requirements.
-
-- [`src/platform.ts`](./src/platform.ts) - this is where your device setup and discovery should go.
-- [`src/platformAccessory.ts`](./src/platformAccessory.ts) - this is where your accessory control logic should go, you can rename or create multiple instances of this file for each accessory type you need to implement as part of your platform plugin. You can refer to the [developer documentation](https://developers.homebridge.io/) to see what characteristics you need to implement for each service type.
-- [`config.schema.json`](./config.schema.json) - update the config schema to match the config you expect from the user. See the [Plugin Config Schema Documentation](https://developers.homebridge.io/#/config-schema).
-
-### Versioning Your Plugin
-
-Given a version number `MAJOR`.`MINOR`.`PATCH`, such as `1.4.3`, increment the:
-
-1. **MAJOR** version when you make breaking changes to your plugin,
-2. **MINOR** version when you add functionality in a backwards compatible manner, and
-3. **PATCH** version when you make backwards compatible bug fixes.
-
-You can use the `npm version` command to help you with this:
-
-```shell
-# major update / breaking changes
-npm version major
-
-# minor update / new features
-npm version update
-
-# patch / bugfixes
-npm version patch
+```bash
+# Test API connection
+npx tsx scripts/testApi.ts
 ```
 
-### Publish Package
+## 📋 How It Works
 
-When you are ready to publish your plugin to [npm](https://www.npmjs.com/), make sure you have removed the `private` attribute from the [`package.json`](./package.json) file then run:
+1. **Schedule Check**: Plugin checks schedule for your team's games
+2. **Game Detection**: When a game is found, switches to active polling
+3. **Game Start**: When game status changes to "live", turns switch ON
+4. **Smart Polling**: In final minutes, polls more frequently for accuracy
+5. **Game End**: When game ends, turns switch OFF
+6. **Idle**: Returns to infrequent schedule checks
 
-```shell
-npm publish
+```
+Schedule Check (every 6h)
+        │
+        ▼
+   Game Found? ──No──→ Wait & Retry
+        │
+       Yes
+        ▼
+   Poll Game (every 5m)
+        │
+        ▼
+   Game Started? ──No──→ Wait & Retry
+        │
+       Yes
+        ▼
+   🏀 Switch ON ──→ HomeKit Automation
+        │
+        ▼
+   Final minutes? ──Yes──→ Poll every 30s
+        │
+        ▼
+   Game Ended?
+        │
+       Yes
+        ▼
+   🏁 Switch OFF ──→ HomeKit Automation
 ```
 
-If you are publishing a scoped plugin, i.e. `@username/homebridge-xxx` you will need to add `--access=public` to command the first time you publish.
+## ⚠️ API Rate Limiting
 
-#### Publishing Beta Versions
+This plugin uses public sports APIs which may have rate limiting. The plugin includes:
 
-You can publish *beta* versions of your plugin for other users to test before you release it to everyone.
+- Exponential backoff with jitter
+- `Retry-After` header support
+- Minimum request intervals
+- Graceful degradation on errors
 
-```shell
-# create a new pre-release version (eg. 2.1.0-beta.1)
-npm version prepatch --preid beta
+If you see 429 errors in the logs, the plugin will automatically back off and retry.
 
-# publish to @beta
-npm publish --tag beta
-```
+## 🚀 Future Extensibility
 
-Users can then install the  *beta* version by appending `@beta` to the install command, for example:
+| Feature | Description |
+|---------|-------------|
+| **NHL Support** | Add NHL API client, team data |
+| **NFL Support** | Add ESPN/NFL API |
+| **MLB Support** | Add MLB Stats API |
+| **Multi-team** | Support multiple teams (flash alternating colors) |
+| **Score alerts** | Flash lights on scoring plays |
+| **Win celebration** | Special color effect when your team wins |
+| **Away game colors** | Option to show opponent's color for away games |
+| **Pre-game countdown** | Gradual color transition before tip-off |
 
-```shell
-sudo npm install -g homebridge-example-plugin@beta
-```
+Want to contribute? PRs welcome!
 
-### Best Practices
+## 🙏 Acknowledgments
 
-Consider creating your plugin with the [Homebridge Verified](https://github.com/homebridge/verified) criteria in mind. This will help you to create a plugin that is easy to use and works well with Homebridge.
-You can then submit your plugin to the Homebridge Verified list for review.
-The most up-to-date criteria can be found [here](https://github.com/homebridge/verified#requirements).
-For reference, the current criteria are:
+- [Homebridge](https://homebridge.io/) for the amazing platform
+- [nba_api](https://github.com/swar/nba_api) for API documentation
 
-- **General**
-  - The plugin must be of type [dynamic platform](https://developers.homebridge.io/#/#dynamic-platform-template).
-  - The plugin must not offer the same nor less functionality than that of any existing **verified** plugin.
-- **Repo**
-  - The plugin must be published to NPM and the source code available on a GitHub repository, with issues enabled.
-  - A GitHub release should be created for every new version of your plugin, with release notes.
-- **Environment**
-  - The plugin must run on all [supported LTS versions of Node.js](https://github.com/homebridge/homebridge/wiki/How-To-Update-Node.js), at the time of writing this is Node v18, v20 and v22.
-  - The plugin must successfully install and not start unless it is configured.
-  - The plugin must not execute post-install scripts that modify the users' system in any way.
-  - The plugin must not require the user to run Homebridge in a TTY or with non-standard startup parameters, even for initial configuration.
-- **Codebase**
-  - The plugin must implement the [Homebridge Plugin Settings GUI](https://developers.homebridge.io/#/config-schema).
-  - The plugin must not contain any analytics or calls that enable you to track the user.
-  - If the plugin needs to write files to disk (cache, keys, etc.), it must store them inside the Homebridge storage directory.
-  - The plugin must not throw unhandled exceptions, the plugin must catch and log its own errors.
+## ⚖️ Disclaimer
 
-### Useful Links
+This project is not affiliated with, endorsed by, or connected to the National Basketball Association (NBA) or any of its member teams.
 
-Note these links are here for help but are not supported/verified by the Homebridge team
+NBA, the NBA logo, and all NBA team names, logos, and related marks are registered trademarks of NBA Properties, Inc. and the respective NBA member teams. All other trademarks are the property of their respective owners.
 
-- [Custom Characteristics](https://github.com/homebridge/homebridge-plugin-template/issues/20)
+Team colors provided in this plugin are approximations for personal, non-commercial home automation use only. This is an independent, open-source project created for fans to enhance their game-watching experience.
+
+Use of the NBA API is subject to the NBA's terms of service. This plugin accesses only publicly available game schedule data.

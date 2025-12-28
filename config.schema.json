@@ -1,18 +1,97 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "GameLight",
   "pluginType": "platform",
   "singular": true,
-  "strictValidation": false,
+  "headerDisplay": "Control your lights when your favorite NBA team plays. Create HomeKit automations to change your lights based on game status.",
+  "footerDisplay": "Create automations in the Home app to control your lights based on the switch state.",
   "schema": {
     "type": "object",
-    "required": ["name"],
-    "additionalProperties": false,
     "properties": {
       "name": {
         "title": "Name",
         "type": "string",
-        "default": "Example Dynamic Platform"
+        "default": "Game Light",
+        "description": "Plugin instance name"
+      },
+      "sport": {
+        "title": "Sport",
+        "type": "string",
+        "default": "NBA",
+        "oneOf": [
+          { "title": "NBA Basketball", "enum": ["NBA"] }
+        ],
+        "description": "Sport league to track"
+      },
+      "team": {
+        "title": "Team",
+        "type": "string",
+        "default": "BOS",
+        "oneOf": [
+          { "title": "Atlanta Hawks", "enum": ["ATL"] },
+          { "title": "Boston Celtics", "enum": ["BOS"] },
+          { "title": "Brooklyn Nets", "enum": ["BKN"] },
+          { "title": "Charlotte Hornets", "enum": ["CHA"] },
+          { "title": "Chicago Bulls", "enum": ["CHI"] },
+          { "title": "Cleveland Cavaliers", "enum": ["CLE"] },
+          { "title": "Dallas Mavericks", "enum": ["DAL"] },
+          { "title": "Denver Nuggets", "enum": ["DEN"] },
+          { "title": "Detroit Pistons", "enum": ["DET"] },
+          { "title": "Golden State Warriors", "enum": ["GSW"] },
+          { "title": "Houston Rockets", "enum": ["HOU"] },
+          { "title": "Indiana Pacers", "enum": ["IND"] },
+          { "title": "LA Clippers", "enum": ["LAC"] },
+          { "title": "Los Angeles Lakers", "enum": ["LAL"] },
+          { "title": "Memphis Grizzlies", "enum": ["MEM"] },
+          { "title": "Miami Heat", "enum": ["MIA"] },
+          { "title": "Milwaukee Bucks", "enum": ["MIL"] },
+          { "title": "Minnesota Timberwolves", "enum": ["MIN"] },
+          { "title": "New Orleans Pelicans", "enum": ["NOP"] },
+          { "title": "New York Knicks", "enum": ["NYK"] },
+          { "title": "Oklahoma City Thunder", "enum": ["OKC"] },
+          { "title": "Orlando Magic", "enum": ["ORL"] },
+          { "title": "Philadelphia 76ers", "enum": ["PHI"] },
+          { "title": "Phoenix Suns", "enum": ["PHX"] },
+          { "title": "Portland Trail Blazers", "enum": ["POR"] },
+          { "title": "Sacramento Kings", "enum": ["SAC"] },
+          { "title": "San Antonio Spurs", "enum": ["SAS"] },
+          { "title": "Toronto Raptors", "enum": ["TOR"] },
+          { "title": "Utah Jazz", "enum": ["UTA"] },
+          { "title": "Washington Wizards", "enum": ["WAS"] }
+        ],
+        "required": true,
+        "description": "Your team to track"
+      },
+      "pollingInterval": {
+        "title": "Game Polling Interval (minutes)",
+        "type": "integer",
+        "default": 5,
+        "minimum": 1,
+        "maximum": 30,
+        "description": "How often to check game status during a game"
+      },
+      "scheduleCheckInterval": {
+        "title": "Schedule Check Interval (hours)",
+        "type": "integer",
+        "default": 6,
+        "minimum": 1,
+        "maximum": 24,
+        "description": "How often to check for scheduled games when idle"
       }
+    },
+    "required": ["team"]
+  },
+  "layout": [
+    {
+      "type": "fieldset",
+      "title": "Team Settings",
+      "items": ["name", "sport", "team"]
+    },
+    {
+      "type": "fieldset",
+      "title": "Advanced Settings",
+      "expandable": true,
+      "expanded": false,
+      "items": ["pollingInterval", "scheduleCheckInterval"]
     }
-  }
+  ]
 }
