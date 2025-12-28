@@ -145,7 +145,7 @@ export class GameLightPlatform implements DynamicPlatformPlugin {
       this.gameActiveAccessory?.setGameActive(true);
     });
 
-    // Game ended - turn switch OFF
+    // Game ended - celebrate win or just turn off
     this.scheduler.on('gameEnded', async (game) => {
       const homeScore = game.homeTeam.score;
       const awayScore = game.awayTeam.score;
@@ -159,9 +159,14 @@ export class GameLightPlatform implements DynamicPlatformPlugin {
         `🏁 Game ended: ${game.awayTeam.teamTricode} ${awayScore} - ` +
           `${game.homeTeam.teamTricode} ${homeScore}`,
       );
-      this.log.info(didWin ? '🎉 Your team won!' : '😢 Better luck next time.');
 
-      this.gameActiveAccessory?.setGameActive(false);
+      if (didWin) {
+        this.log.info('🎉 Your team won!');
+        await this.celebrateVictory();
+      } else {
+        this.log.info('😢 Better luck next time.');
+        this.gameActiveAccessory?.setGameActive(false);
+      }
     });
 
     // State changes
@@ -173,6 +178,35 @@ export class GameLightPlatform implements DynamicPlatformPlugin {
     this.scheduler.on('error', async (error) => {
       this.log.error('Scheduler error:', error.message);
     });
+  }
+
+  /**
+   * Celebrate a victory by blinking the switch
+   * This triggers the user's HomeKit automations to flash the lights
+   */
+  private async celebrateVictory(): Promise<void> {
+    const blinkCount = 3;
+    const blinkDurationMs = 800; // Time switch stays in each state
+
+    for (let i = 0; i < blinkCount; i++) {
+      // Turn OFF
+      this.gameActiveAccessory?.setGameActive(false);
+      await this.delay(blinkDurationMs);
+
+      // Turn ON
+      this.gameActiveAccessory?.setGameActive(true);
+      await this.delay(blinkDurationMs);
+    }
+
+    // Final turn OFF
+    this.gameActiveAccessory?.setGameActive(false);
+  }
+
+  /**
+   * Helper to create a delay
+   */
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
