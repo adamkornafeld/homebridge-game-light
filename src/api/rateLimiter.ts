@@ -143,7 +143,7 @@ export class RateLimitedFetcher {
           }
 
           // Throw to trigger retry
-          throw new Error(`Rate limited (429)`);
+          throw new Error('Rate limited (429)');
         }
 
         // Handle other HTTP errors
@@ -181,11 +181,6 @@ export class RateLimitedFetcher {
       };
     } catch (error) {
       // All retries exhausted or non-retryable error
-      const rateLimitInfo: RateLimitInfo = {
-        wasThrottled: this.wasThrottled,
-        consecutiveFailures: this.consecutiveFailures,
-      };
-
       // Re-throw with context
       if (error instanceof Error) {
         error.message = `Failed after ${this.consecutiveFailures} attempts: ${error.message}`;

@@ -10,7 +10,6 @@ import type { GameClock } from './types.js';
  */
 
 const REGULATION_PERIOD_SECONDS = 12 * 60; // 12 minutes
-const OVERTIME_PERIOD_SECONDS = 5 * 60; // 5 minutes
 const REGULATION_PERIODS = 4;
 
 /**

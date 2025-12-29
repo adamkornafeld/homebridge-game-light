@@ -12,8 +12,8 @@ async function main() {
   console.log('🏀 Game Scheduler Test\n');
   console.log('='.repeat(60));
 
-  // Create console logger
-  const log = {
+  // Console logger (used by createTestScheduler internally)
+  const _log = {
     info: (message: string, ...args: unknown[]) =>
       console.log(`[INFO] ${message}`, ...args),
     warn: (message: string, ...args: unknown[]) =>
@@ -25,6 +25,7 @@ async function main() {
     log: () => {},
     success: () => {},
   } as unknown as Logging;
+  void _log; // Suppress unused warning - available for debugging
 
   // Get Celtics team info
   const celtics = getTeam('BOS');
@@ -48,9 +49,9 @@ async function main() {
     console.log(`   ${game.awayTeam.teamTricode} @ ${game.homeTeam.teamTricode}`);
   });
 
-  scheduler.on('gameStarted', async (game) => {
+  scheduler.on('gameStarted', async () => {
     console.log('\n🏀 EVENT: gameStarted');
-    console.log(`   Switch would turn ON`);
+    console.log('   Switch would turn ON');
     switchState = true;
   });
 

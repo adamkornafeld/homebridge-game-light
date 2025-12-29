@@ -170,31 +170,31 @@ export class GameScheduler extends EventEmitter<SchedulerEvents> {
    */
   private determineState(game: Game): GameState {
     switch (game.gameStatus) {
-      case GameStatusCode.Scheduled:
-        return 'scheduled';
+    case GameStatusCode.Scheduled:
+      return 'scheduled';
 
-      case GameStatusCode.InProgress: {
-        // Check for halftime
-        if (this.isHalftime(game)) {
-          return 'halftime';
-        }
-
-        // Check for final minutes (Q4/OT with ≤2 min)
-        if (game.gameClock && game.period >= 4) {
-          const clock = parseGameClock(game.gameClock, game.period);
-          if (isInFinalMinutes(clock)) {
-            return 'final-minutes';
-          }
-        }
-
-        return 'live';
+    case GameStatusCode.InProgress: {
+      // Check for halftime
+      if (this.isHalftime(game)) {
+        return 'halftime';
       }
 
-      case GameStatusCode.Final:
-        return 'finished';
+      // Check for final minutes (Q4/OT with ≤2 min)
+      if (game.gameClock && game.period >= 4) {
+        const clock = parseGameClock(game.gameClock, game.period);
+        if (isInFinalMinutes(clock)) {
+          return 'final-minutes';
+        }
+      }
 
-      default:
-        return 'idle';
+      return 'live';
+    }
+
+    case GameStatusCode.Final:
+      return 'finished';
+
+    default:
+      return 'idle';
     }
   }
 
@@ -266,43 +266,49 @@ export class GameScheduler extends EventEmitter<SchedulerEvents> {
    */
   private getNextPollInterval(): number {
     switch (this.currentState) {
-      case 'idle':
-        return this.config.idlePollIntervalMs;
+    case 'idle':
+      return this.config.idlePollIntervalMs;
 
-      case 'scheduled': {
-        // Poll more frequently as game approaches
-        if (this.currentGame) {
-          const gameTime = new Date(this.currentGame.gameTimeUTC).getTime();
-          const timeToGame = gameTime - Date.now();
+    case 'scheduled': {
+      // Poll more frequently as game approaches
+      if (this.currentGame) {
+        const gameTime = new Date(this.currentGame.gameTimeUTC).getTime();
+        const timeToGame = gameTime - Date.now();
 
-          if (timeToGame > 2 * HOUR) return 1 * HOUR;
-          if (timeToGame > 30 * MINUTE) return 15 * MINUTE;
-          if (timeToGame > 5 * MINUTE) return 5 * MINUTE;
-          return 1 * MINUTE; // Game imminent
+        if (timeToGame > 2 * HOUR) {
+          return 1 * HOUR;
         }
-        return 15 * MINUTE;
-      }
-
-      case 'halftime':
-        return 10 * MINUTE;
-
-      case 'final-minutes':
-        return 30 * SECOND; // High-frequency polling!
-
-      case 'live': {
-        // Check if we're in Q4 (poll more frequently)
-        if (this.currentGame && this.currentGame.period === 4) {
-          return 2 * MINUTE;
+        if (timeToGame > 30 * MINUTE) {
+          return 15 * MINUTE;
         }
-        return this.config.defaultPollIntervalMs;
+        if (timeToGame > 5 * MINUTE) {
+          return 5 * MINUTE;
+        }
+        return 1 * MINUTE; // Game imminent
       }
+      return 15 * MINUTE;
+    }
 
-      case 'finished':
-        // Transition to idle on next poll
-        return 1 * MINUTE;
+    case 'halftime':
+      return 10 * MINUTE;
 
-      default:
-        return this.config.defaultPollIntervalMs;
+    case 'final-minutes':
+      return 30 * SECOND; // High-frequency polling!
+
+    case 'live': {
+      // Check if we're in Q4 (poll more frequently)
+      if (this.currentGame && this.currentGame.period === 4) {
+        return 2 * MINUTE;
+      }
+      return this.config.defaultPollIntervalMs;
+    }
+
+    case 'finished':
+      // Transition to idle on next poll
+      return 1 * MINUTE;
+
+    default:
+      return this.config.defaultPollIntervalMs;
     }
   }
 

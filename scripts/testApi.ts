@@ -53,7 +53,7 @@ async function main() {
 
       for (const game of celticsGames) {
         console.log('='.repeat(60));
-        console.log(`🎯 CELTICS GAME FOUND`);
+        console.log('🎯 CELTICS GAME FOUND');
         console.log('='.repeat(60));
 
         const isHome = game.homeTeam.teamTricode === 'BOS';
@@ -71,30 +71,30 @@ async function main() {
         // Parse status code
         let statusEmoji: string;
         switch (game.gameStatus) {
-          case GameStatusCode.Scheduled:
-            statusEmoji = '📅 Scheduled';
-            break;
-          case GameStatusCode.InProgress:
-            statusEmoji = '🔴 LIVE';
-            break;
-          case GameStatusCode.Final:
-            statusEmoji = '🏁 Final';
-            break;
-          default:
-            statusEmoji = `❓ Unknown (${game.gameStatus})`;
+        case GameStatusCode.Scheduled:
+          statusEmoji = '📅 Scheduled';
+          break;
+        case GameStatusCode.InProgress:
+          statusEmoji = '🔴 LIVE';
+          break;
+        case GameStatusCode.Final:
+          statusEmoji = '🏁 Final';
+          break;
+        default:
+          statusEmoji = `❓ Unknown (${game.gameStatus})`;
         }
         console.log(`   Status Code: ${statusEmoji}`);
 
         // Score (if game started)
         if (game.gameStatus !== GameStatusCode.Scheduled) {
-          console.log(`\n🏀 Score:`);
+          console.log('\n🏀 Score:');
           console.log(`   ${game.awayTeam.teamTricode}: ${game.awayTeam.score}`);
           console.log(`   ${game.homeTeam.teamTricode}: ${game.homeTeam.score}`);
         }
 
         // Game clock (if in progress)
         if (game.gameStatus === GameStatusCode.InProgress) {
-          console.log(`\n⏰ Game Clock:`);
+          console.log('\n⏰ Game Clock:');
           console.log(`   Period: ${game.period}`);
           console.log(`   Clock: ${game.gameClock}`);
 
@@ -107,20 +107,20 @@ async function main() {
         }
 
         // Game time
-        console.log(`\n🕐 Game Time:`);
+        console.log('\n🕐 Game Time:');
         console.log(`   UTC: ${game.gameTimeUTC}`);
         console.log(`   ET: ${game.gameEt}`);
 
         // What the plugin would do
-        console.log(`\n🎮 Plugin Action:`);
+        console.log('\n🎮 Plugin Action:');
         if (game.gameStatus === GameStatusCode.InProgress) {
           console.log(`   ✅ LIGHTS SHOULD BE: ${celtics.colors.primary.name.toUpperCase()}`);
           console.log(`   Hue: ${celtics.colors.primary.hue}, Saturation: ${celtics.colors.primary.saturation}`);
         } else if (game.gameStatus === GameStatusCode.Scheduled) {
-          console.log(`   ⏳ Waiting for game to start...`);
+          console.log('   ⏳ Waiting for game to start...');
           console.log(`   Lights will change to ${celtics.colors.primary.name} at tip-off`);
         } else {
-          console.log(`   🏠 Game over - lights should be restored to original state`);
+          console.log('   🏠 Game over - lights should be restored to original state');
         }
 
         console.log('');
