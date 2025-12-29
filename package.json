@@ -3,7 +3,6 @@
   "displayName": "Game Light",
   "type": "module",
   "version": "1.0.0",
-  "private": true,
   "description": "A Homebridge plugin that creates a switch to trigger HomeKit automations when your favorite NBA team plays.",
   "author": "Adam Kornafeld",
   "license": "Apache-2.0",
